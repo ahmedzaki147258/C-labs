@@ -1,0 +1,9 @@
+# depslib dependency file v1.0
+1731925236 source:d:\iti\c project\day2\main.c
+	<stdio.h>
+	<stdlib.h>
+	<windows.h>
+	"header.h"
+
+1731919418 d:\iti\c project\day2\header.h
+

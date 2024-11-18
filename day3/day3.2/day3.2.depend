@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1731955770 source:d:\iti\c project\day3.2\main.c
+	<stdio.h>
+	<stdlib.h>
+	<conio.h>
+	<windows.h>
+

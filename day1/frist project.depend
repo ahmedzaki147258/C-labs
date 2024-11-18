@@ -1,0 +1,9 @@
+# depslib dependency file v1.0
+1731763030 source:d:\iti\c project\frist project\main.c
+	<stdio.h>
+	<stdlib.h>
+
+1731838392 source:d:\iti\c project\day1\main.c
+	<stdio.h>
+	<stdlib.h>
+
