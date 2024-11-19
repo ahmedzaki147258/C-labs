@@ -11,6 +11,8 @@
 #define DOWN 80
 // #define LEFT 75
 // #define RIGHT 77
+#define HOME 71
+#define END 79
 #define ESC 27
 #define ENTER 13
 #define EXTENDED 224
@@ -72,6 +74,12 @@ int main()
                     break;
                 case DOWN:
                     currentSelection = (currentSelection + 1) % SIZE;
+                    break;
+                case HOME:
+                    currentSelection = 0;
+                    break;
+                case END:
+                    currentSelection = SIZE - 1;
                     break;
             }
         } else if (ch == ENTER) {

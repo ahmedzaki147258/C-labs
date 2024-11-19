@@ -17,9 +17,11 @@ int calcPower(int base, int exp){
     if(exp == 0){
         return 1;
     }
-    if(exp % 2 == 0){
-        return calcPower(base, exp/2) * calcPower(base, exp/2);
+
+    int halfPower = calcPower(base, exp / 2);
+    if (exp % 2 == 0) {
+        return halfPower * halfPower;
     } else {
-        return calcPower(base, exp/2) * calcPower(base, exp/2) * base;
+        return halfPower * halfPower * base;
     }
 }

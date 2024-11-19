@@ -4,6 +4,18 @@
 	<stdlib.h>
 	<windows.h>
 	"header.h"
+	<stdio.h>
+	<stdlib.h>
+	<windows.h>
+	"header.h"
 
 1731919418 d:\iti\c project\day2\header.h
+
+1732023221 source:d:\iti\c project\c-labs\day2\main.c
+	<stdio.h>
+	<stdlib.h>
+	<windows.h>
+	"header.h"
+
+1731919418 d:\iti\c project\c-labs\day2\header.h
 
