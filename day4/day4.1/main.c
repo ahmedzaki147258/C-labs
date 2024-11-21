@@ -1,26 +1,30 @@
 #include <stdio.h>
 #include <stdlib.h>
-
 #define ROW 3
 #define COL 4
 
 int main()
 {
-    int arr2d[ROW][COL];
-    int sum[ROW], sumOfRow = 0;
+    char check;
     float avg[COL], avgOfColumn;
+    int arr2d[ROW][COL], sum[ROW], sumOfRow = 0, flag = 1;
 
-    for(int i=0;i<ROW;++i){
+    for(int i=0;i<ROW;++i){ // validation
         for(int j=0;j<COL;++j){
-            printf("Enter number for [%d][%d]: ", i + 1, j + 1);
-            while (!scanf("%d", &arr2d[i][j])) {
-                printf("Invalid input, Enter number for [%d][%d]: ", i + 1, j + 1);
-                while (getchar()!='\n');
+            flag = 1;
+            while (flag) {
+                printf("Enter number for [%d][%d]: ", i + 1, j + 1);
+                if (scanf("%d%c", &arr2d[i][j], &check) && check == '\n') {
+                    flag = 0;
+                } else {
+                    printf("Invalid input, ");
+                    while (getchar() != '\n');
+                }
             }
         }
     }
 
-    for(int i=0;i<ROW;i++){
+    for(int i=0;i<ROW;i++){ // calc Sum.
         for(int j=0;j<COL;j++){
             sumOfRow += arr2d[i][j];
         }
@@ -28,7 +32,7 @@ int main()
         sumOfRow = 0;
     }
 
-    for(int j=0;j<COL;j++){
+    for(int j=0;j<COL;j++){ // calc Avg.
         for(int i=0;i<ROW;i++){
             sumOfRow += arr2d[i][j];
         }

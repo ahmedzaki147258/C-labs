@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1732121926 source:d:\iti\c project\c-labs\day5\day5.1\main.c
+	<stdio.h>
+	<stdlib.h>
+	"a7med_StringFunctions.c"
+
+1732121954 d:\iti\c project\c-labs\day5\day5.1\a7med_stringfunctions.c
+
