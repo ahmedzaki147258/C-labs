@@ -9,7 +9,7 @@
 #define RED 12
 #define BLUE 9
 #define PURPLE 13
-#define SIZE 4
+#define SIZE 5
 #define MAX_SIZE 100
 #define UP 72
 #define DOWN 80
@@ -43,8 +43,8 @@ void exitProgram() {
 void printMenu(int currentSelection) {
     system("cls");
     printPageTitle("Menu Management");
-    gotoxy(0,3);
-    char options[SIZE][MAX_SIZE] = { "New", "Display", "Modify", "Exit" };
+    gotoxy(0,2);
+    char options[SIZE][MAX_SIZE] = { "New", "Display", "Modify", "Delete", "Exit" };
     for (int i = 0; i < SIZE; i++) {
         if (i == currentSelection) {
             setcolor(PURPLE);
@@ -72,11 +72,27 @@ typedef struct Employee{
     int netSalary;
 } Employee;
 
+void showEmployeeCodes(int numOfStoredEmployee, Employee employee[]){
+    gotoxy(0, 2);
+    setcolor(BLUE);
+    printf("Employee Codes\n");
+    setcolor(WHITE);
+    for (int i = 0; i < numOfStoredEmployee; i++) {
+        printf("Employee%d\n", i + 1);
+        printf("Code: %d\n\n", employee[i].code);
+    }
+}
+
+void simulatedPressingKey(){
+    keybd_event(VkKeyScan('A'), 0, 0, 0); // key down
+    keybd_event(VkKeyScan('A'), 0, KEYEVENTF_KEYUP, 0); // key up
+}
+
 int main()
 {
     char check;
-    int ch, flag = 1, currentSelection = 0, numOfStoredEmployee = 0;
-    Employee employee[MAX_SIZE];
+    Employee employee[MAX_SIZE] = {0};
+    int ch, flag = 1, flagForAddingEmployee = 0, flagForingEmployee = 1, currentSelection = 0, numOfStoredEmployee = 0;
 
     while (1) {
         printMenu(currentSelection);
@@ -101,10 +117,10 @@ int main()
         } else if (ch == ENTER) {
             system("cls");
             switch (currentSelection) {
-                case 0:
-                    printPageTitle("Add New Employee");
+                case 0: // ADD EMPLOYEE
+                    printPageTitle("Add New Employees");
                     flag = 1;
-                    gotoxy(0, 1);
+                    gotoxy(0, 2);
                     setcolor(WHITE);
                     int numberOfEmployees;
 
@@ -116,6 +132,7 @@ int main()
                         if (stringCompare(input, "x") == 0 || stringCompare(input, "X") == 0) {
                             printMenu(currentSelection);
                             flag = 0;
+                            simulatedPressingKey();
                         }
 
                         numberOfEmployees = atoi(input); // convert input to number
@@ -128,7 +145,7 @@ int main()
 
                     flag = 1;
                     int currentNumberOfEmployee = numOfStoredEmployee;
-                    for (int i = currentNumberOfEmployee; i < currentNumberOfEmployee + numberOfEmployees && flag == 1; i++) {
+                    for (int i = currentNumberOfEmployee; i < currentNumberOfEmployee + numberOfEmployees && (flag == 1 || flagForAddingEmployee == 1); i++) {
                         int codeValid = 0, salaryValid = 0, nameValid = 0;
 
                         while (!codeValid) { // validation code
@@ -179,21 +196,33 @@ int main()
                         printf("\nEmployee %d added successfully.\n", i + 1);
 
                         if(numOfStoredEmployee - currentNumberOfEmployee < numberOfEmployees){
+                            flag = 1;
                             char continueAdding;
-                            printf("Do you want to continue adding employees? (y/n): ");
-                            scanf("%c", &continueAdding);
-                            if (continueAdding == 'n' || continueAdding == 'N') {
-                                printMenu(currentSelection);
-                                flag = 0;
+                            while (flag) {
+                                printf("Do you want to continue adding employees? (y/n): ");
+                                if(scanf(" %c", &continueAdding) == 1){
+                                    if (continueAdding == 'y' || continueAdding == 'Y') {
+                                        flag = 0;
+                                        flagForAddingEmployee = 1;
+                                    } else if (continueAdding == 'n' || continueAdding == 'N') {
+                                        printMenu(currentSelection);
+                                        flag = 0;
+                                        flagForAddingEmployee = 0;
+                                        simulatedPressingKey();
+                                    } else {
+                                        printf("Invalid input. Please enter 'y' or 'n' only.\n");
+                                    }
+                                }
+                                while (getchar() != '\n');
                             }
                         }
                         printf("\n");
                     }
                     break;
 
-                case 1:
+                case 1:  // DISPLAY EMPLOYEE
                     printPageTitle("Display Employees");
-                    gotoxy(0, 1);
+                    gotoxy(0, 2);
                     setcolor(BLUE);
                     printf("Employee Details\n");
                     for (int i = 0; i < numOfStoredEmployee; i++) {
@@ -206,66 +235,76 @@ int main()
                     }
                     break;
 
-                case 2:
+                case 2:  // MODIFY EMPLOYEE
                     printPageTitle("Modify Employees");
-                    gotoxy(0, 1);
-                    setcolor(BLUE);
-                    printf("Employee Codes\n");
-                    setcolor(WHITE);
-                    for (int i = 0; i < numOfStoredEmployee; i++) {
-                        printf("Employee%d\n", i + 1);
-                        printf("Code: %d\n\n", employee[i].code);
-                    }
+                    showEmployeeCodes(numOfStoredEmployee, employee);
 
                     flag = 1;
-                    int modifyCode;
-                    while (flag) {
+                    flagForingEmployee = 1;
+                    while (flag == 1 && flagForingEmployee == 1) {
                         printf("Enter the code of the employee you want to modify (or press 'x' to exit): ");
                         char input[10];
                         scanf("%s", input);
                         if (stringCompare(input, "x") == 0 || stringCompare(input, "X") == 0) {
                             printMenu(currentSelection);
-                            flag = 0;
+                            flagForingEmployee = 0;
+                            simulatedPressingKey();
                         }
 
                         int modifyCode = atoi(input); // convert input to number
                         if (modifyCode > 0) {
                             int found = 0;
-                            for (int i = 0; i < numOfStoredEmployee; i++) {
+                            for (int i = 0; i < numOfStoredEmployee && found == 0; i++) {
                                 if (employee[i].code == modifyCode) {
                                     found = 1;
                                     char choice;
+                                    int validChoice = 0;
 
-                                    printf("Do you want to modify the name (n) or salary (s)? ");
-                                    scanf(" %c", &choice);
+                                    while (flag && flagForingEmployee) {
+                                        printf("Do you want to modify the name (n) or salary (s)? ");
+                                        if (scanf(" %c", &choice) == 1) {
+                                            while (getchar() != '\n');
 
-                                    if (choice == 'n' || choice == 'N') {
-                                        int nameValid = 0;
-                                        while (!nameValid) {
-                                            printf("Enter the new name (minimum 2 characters): ");
-                                            getchar();
-                                            scanf("%[^\n]", &employee[i].name);
-                                            if (stringLength(employee[i].name) < 2) {
-                                                printf("Invalid name. Please enter at least 2 characters.\n");
+                                            if (choice == 'n' || choice == 'N') {
+                                                flag = 0;
+                                                int nameValid = 0;
+
+                                                while (!nameValid) {
+                                                    printf("Enter the edit name (minimum 2 characters): ");
+                                                    scanf(" %[^\n]", &employee[i].name);
+
+                                                    if (stringLength(employee[i].name) < 2) {
+                                                        printf("Invalid name. Please enter at least 2 characters.\n");
+                                                    } else {
+                                                        nameValid = 1;
+                                                        printf("Name updated successfully.\n");
+                                                    }
+                                                }
+                                            } else if (choice == 's' || choice == 'S') {
+                                                flag = 0;
+                                                int salaryValid = 0;
+
+                                                while (!salaryValid) {
+                                                    printf("Enter the edit netSalary: ");
+                                                    if (scanf("%d", &employee[i].netSalary) == 1) {
+                                                        if (employee[i].netSalary > 0) {
+                                                            salaryValid = 1;
+                                                            printf("NetSalary updated successfully.\n");
+                                                        } else {
+                                                            printf("Invalid input. NetSalary must be a positive number.\n");
+                                                        }
+                                                    } else {
+                                                        printf("Invalid input. Please enter a valid number.\n");
+                                                        while (getchar() != '\n');
+                                                    }
+                                                }
                                             } else {
-                                                nameValid = 1;
-                                                printf("Name updated successfully.\n");
+                                                printf("Invalid choice. Please enter 'n' for name or 's' for salary.\n");
                                             }
+                                        } else {
+                                            printf("Invalid input. Please enter 'n' for name or 's' for salary.\n");
+                                            while (getchar() != '\n');
                                         }
-                                    } else if (choice == 's' || choice == 'S') {
-                                        int salaryValid = 0;
-                                        while (!salaryValid) {
-                                            printf("Enter the new net salary: ");
-                                            scanf("%d", &employee[i].netSalary);
-                                            if (employee[i].netSalary > 0) {
-                                                salaryValid = 1;
-                                                printf("NetSalary updated successfully.\n");
-                                            } else {
-                                                printf("Invalid input. NetSalary must be a positive number.\n");
-                                            }
-                                        }
-                                    } else {
-                                        printf("Invalid choice.\n");
                                     }
                                 }
                             }
@@ -276,10 +315,50 @@ int main()
                         } else if(flag) {
                             printf("Invalid input. Please enter a valid code.\n");
                         }
+                        flag = 1;
                         printf("\n");
                     }
                     break;
-                case 3:
+                case 3: // DELETE EMPLOYEE
+                    printPageTitle("Delete Employees");
+                    showEmployeeCodes(numOfStoredEmployee, employee);
+
+                    flag = 1;
+                    int deleteCode;
+                    while (flag) {
+                        printf("Enter the code of the employee you want to delete (or press 'x' to exit): ");
+                        char input[10];
+                        scanf("%s", input);
+                        if (stringCompare(input, "x") == 0 || stringCompare(input, "X") == 0) {
+                            printMenu(currentSelection);
+                            flag = 0;
+                            simulatedPressingKey();
+                        }
+
+                        int deleteCode = atoi(input); // convert input to number
+                        if (deleteCode > 0) {
+                            int found = 0;
+                            for (int i = 0; i < numOfStoredEmployee && found == 0; i++) {
+                                if (employee[i].code == deleteCode) {
+                                    found = 1;
+                                    for(int j = i; j < numOfStoredEmployee - 1; j++){
+                                        employee[j] = employee[j+1];
+                                    }
+                                    numOfStoredEmployee--;
+                                    printf("Employee with code %d deleted successfully.\n", deleteCode);
+                                }
+                            }
+
+                            if (!found) {
+                                printf("Employee with code %d not found. Please enter a valid code.\n", deleteCode);
+                            }
+                        } else if(flag) {
+                            printf("Invalid input. Please enter a valid code.\n");
+                        }
+                        printf("\n");
+                    }
+                    break;
+                case 4: // EXIT
                     exitProgram();
                     return 0;
             }
