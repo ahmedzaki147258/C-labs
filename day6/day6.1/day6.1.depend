@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1732389764 source:d:\iti\c project\c-labs\day6\day6.1\main.c
+	<stdio.h>
+	<conio.h>
+	<string.h>
+
